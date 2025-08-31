@@ -123,8 +123,9 @@ __global__ void get_random_trial_position(Boxsize Box, Atoms* d_a, Atoms NewMol,
     case CBMC_INSERTION: //Insertion (whole and fractional molecule)//
     {
       scale = proposed_scale.x; scaleCoul = proposed_scale.y;
-      double3 BoxLength = {Box.Cell[0], Box.Cell[4], Box.Cell[8]};
-      NewMol.pos[i] = BoxLength * random[random_index];
+      // Generate random fractional coordinates [0,1) and convert to Cartesian
+      double3 frac_coords = random[random_index];
+      matrix_multiply_by_vector(Box.Cell, frac_coords, NewMol.pos[i]);
       break;
     }
     case CBMC_DELETION: //Deletion (whole and fractional molecule)//
@@ -136,8 +137,9 @@ __global__ void get_random_trial_position(Boxsize Box, Atoms* d_a, Atoms NewMol,
       }
       else
       {
-        double3 BoxLength = {Box.Cell[0], Box.Cell[4], Box.Cell[8]};
-        NewMol.pos[i] = BoxLength * random[random_index];
+        // Generate random fractional coordinates [0,1) and convert to Cartesian
+        double3 frac_coords = random[random_index];
+        matrix_multiply_by_vector(Box.Cell, frac_coords, NewMol.pos[i]);
       }
       //printf("FIRSTBEAD: trial: %lu, xyz: %.5f %.5f %.5f\n", i, NewMol.pos[i].x, NewMol.pos[i].y, NewMol.pos[i].z);
       //if(i == 0) printf("i=0, start_position: %lu\n", start_position);
@@ -147,8 +149,9 @@ __global__ void get_random_trial_position(Boxsize Box, Atoms* d_a, Atoms NewMol,
     {
       scale     = AllData.scale[start_position];
       scaleCoul = AllData.scaleCoul[start_position];
-      double3 BoxLength = {Box.Cell[0], Box.Cell[4], Box.Cell[8]};
-      NewMol.pos[i] = BoxLength * random[random_index];
+      // Generate random fractional coordinates [0,1) and convert to Cartesian
+      double3 frac_coords = random[random_index];
+      matrix_multiply_by_vector(Box.Cell, frac_coords, NewMol.pos[i]);
       break;
     }
     case REINSERTION_RETRACE: //Reinsertion-Retrace//
@@ -160,8 +163,9 @@ __global__ void get_random_trial_position(Boxsize Box, Atoms* d_a, Atoms NewMol,
       }
       else //Zhao's note: not necessarily correct, retrace only needs 1 trial, no else statement needed//
       {
-        double3 BoxLength = {Box.Cell[0], Box.Cell[4], Box.Cell[8]};
-        NewMol.pos[i] = BoxLength * random[random_index];
+        // Generate random fractional coordinates [0,1) and convert to Cartesian
+        double3 frac_coords = random[random_index];
+        matrix_multiply_by_vector(Box.Cell, frac_coords, NewMol.pos[i]);
       }
       break;
     }
